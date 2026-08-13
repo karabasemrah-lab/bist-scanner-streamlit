@@ -17,7 +17,7 @@ st.caption("🔵 Birikim → 🚀 Taze Kırılım → 🟢 Güçlü Fusion → �
 with st.sidebar:
     st.header("Tarama Ayarları")
     source = st.radio("Evren", ["Özel Liste", "TradingView Ön Eleme"], index=0)
-    max_candidates = st.slider("İşlenecek maksimum hisse", 5, 120, 30, 5)
+    max_candidates = st.slider("İşlenecek maksimum hisse", 5, 600, 100, 5)
     min_avg_volume = st.number_input(
         "Min. 30G ortalama hacim",
         min_value=0,
