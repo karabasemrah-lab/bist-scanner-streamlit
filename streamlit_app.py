@@ -89,13 +89,13 @@ with st.sidebar:
         index=0
     )
 
-max_candidates = st.slider(
-    "İşlenecek maksimum hisse",
-    min_value=5,
-    max_value=1000,
-    value=100,
-    step=5
-)
+    max_candidates = st.slider(
+        "İşlenecek maksimum hisse",
+        min_value=5,
+        max_value=1000,
+        value=100,
+        step=5
+    )
 
     min_avg_volume = st.number_input(
         "Min. 30G ortalama hacim",
