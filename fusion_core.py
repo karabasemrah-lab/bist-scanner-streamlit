@@ -3,7 +3,11 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 import yfinance as yf
+import threading
 from symbols import REFERENCE_TICKERS
+
+_REFERENCE_CACHE = None
+_REFERENCE_LOCK = threading.Lock()
 
 def clean(df):
     if df is None or df.empty:
@@ -28,6 +32,23 @@ def download(ticker, period="2y", interval="1d"):
         ))
     except Exception:
         return pd.DataFrame()
+
+
+def get_reference_data():
+    """Referans endekslerini süreç boyunca bir kez indirip tekrar kullan."""
+    global _REFERENCE_CACHE
+
+    if _REFERENCE_CACHE is not None:
+        return _REFERENCE_CACHE
+
+    with _REFERENCE_LOCK:
+        if _REFERENCE_CACHE is None:
+            _REFERENCE_CACHE = {
+                key: download(ticker)
+                for key, ticker in REFERENCE_TICKERS.items()
+            }
+
+    return _REFERENCE_CACHE
 
 def atr(df, n=14):
     p = df["Close"].shift(1)
@@ -96,7 +117,7 @@ def analyze_symbol(symbol, one_line=0.30, near_zero=0.15, mature_bars=30):
     if len(stock) < 260:
         return None
 
-    refs = {k:download(v) for k,v in REFERENCE_TICKERS.items()}
+    refs = get_reference_data()
     if refs["XU100"].empty or refs["XU030"].empty:
         return None
 

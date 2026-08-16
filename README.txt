@@ -1,12 +1,15 @@
-BIST Scanner Streamlit v0.4
-================================
+BIST Scanner Streamlit v0.8
+===========================
 
-Değişiklik:
-- "İşlenecek maksimum hisse" sliderı kaldırıldı.
-- Özel Liste seçildiğinde listedeki tüm hisseler taranır.
-- TradingView Ön Eleme seçildiğinde tüm BIST evreni istenir.
-- Fusion Faz ve Trend Devam bölümleri korunmuştur.
-- Excel çıktı korunmuştur.
+v0.8 değişiklikleri:
+- Tarama motorlarına dokunulmadı; v0.7 analiz mantığı korunmuştur.
+- Fusion Excel ana sayfası artık ekranda gösterilen/filtrelenen sonuçları içerir.
+- Trend Devam Excel ana sayfası yalnızca Devam Kırılımı sonuçlarını içerir.
+- Excel sütun başlıkları Türkçeleştirildi ve sadeleştirildi.
+- Otomatik sütun genişliği, filtre, sabit başlık satırı ve sayı biçimlendirmesi eklendi.
+- İkinci sayfada "Tüm Analiz" ham analiz sonuçları korunur.
+- Veri alınamayan/işlenemeyen hisseler varsa "İşlenemeyenler" sayfasına eklenir.
+- TradingView hisse bağlantıları ve paralel tarama yapısı korunmuştur.
 
-Not:
-Tüm BIST Fusion taraması çok sayıda veri çağrısı yaptığı için uzun sürebilir.
+Çalıştırma:
+python -m streamlit run streamlit_app.py
