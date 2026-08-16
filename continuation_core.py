@@ -16,14 +16,12 @@ def clean(df):
         x.columns = [str(c[0]) for c in x.columns]
 
     need = ["Open", "High", "Low", "Close", "Volume"]
-
     if not all(c in x.columns for c in need):
         return pd.DataFrame()
 
     x = x[need].replace([np.inf, -np.inf], np.nan)
     x = x.dropna(subset=["Open", "High", "Low", "Close"]).sort_index()
     x["Volume"] = x["Volume"].fillna(0)
-
     return x
 
 
@@ -64,17 +62,8 @@ def analyze_continuation(
     ema20 = close.ewm(span=20, adjust=False).mean()
     ema50 = close.ewm(span=50, adjust=False).mean()
 
-    prior_high = (
-        high.shift(1)
-        .rolling(consolidation_bars)
-        .max()
-    )
-
-    prior_low = (
-        low.shift(1)
-        .rolling(consolidation_bars)
-        .min()
-    )
+    prior_high = high.shift(1).rolling(consolidation_bars).max()
+    prior_low = low.shift(1).rolling(consolidation_bars).min()
 
     breakout_level = prior_high.iloc[-1]
 
@@ -85,7 +74,6 @@ def analyze_continuation(
     )
 
     range_pct = np.nan
-
     if (
         pd.notna(prior_high.iloc[-1])
         and pd.notna(prior_low.iloc[-1])
@@ -108,22 +96,11 @@ def analyze_continuation(
         and close.iloc[-1] > close.iloc[-20]
     )
 
-    avg_volume20 = (
-        volume.shift(1)
-        .rolling(20)
-        .mean()
-    )
-
+    avg_volume20 = volume.shift(1).rolling(20).mean()
     volume_ratio = np.nan
 
-    if (
-        pd.notna(avg_volume20.iloc[-1])
-        and avg_volume20.iloc[-1] > 0
-    ):
-        volume_ratio = (
-            volume.iloc[-1]
-            / avg_volume20.iloc[-1]
-        )
+    if pd.notna(avg_volume20.iloc[-1]) and avg_volume20.iloc[-1] > 0:
+        volume_ratio = volume.iloc[-1] / avg_volume20.iloc[-1]
 
     volume_ok = bool(
         pd.isna(volume_ratio)
@@ -138,16 +115,12 @@ def analyze_continuation(
     )
 
     score = 0
-
     if trend_ok:
         score += 35
-
     if consolidation_ok:
         score += 25
-
     if breakout:
         score += 25
-
     if volume_ok:
         score += 15
 
@@ -156,21 +129,9 @@ def analyze_continuation(
         "continuation_breakout": continuation,
         "phase": "🟣 DEVAM KIRILIMI" if continuation else "⚪ UYGUN DEĞİL",
         "close": round(float(close.iloc[-1]), 2),
-        "breakout_level": (
-            round(float(breakout_level), 2)
-            if pd.notna(breakout_level)
-            else np.nan
-        ),
-        "consolidation_range_pct": (
-            round(float(range_pct), 2)
-            if pd.notna(range_pct)
-            else np.nan
-        ),
-        "volume_ratio": (
-            round(float(volume_ratio), 2)
-            if pd.notna(volume_ratio)
-            else np.nan
-        ),
+        "breakout_level": round(float(breakout_level), 2) if pd.notna(breakout_level) else np.nan,
+        "consolidation_range_pct": round(float(range_pct), 2) if pd.notna(range_pct) else np.nan,
+        "volume_ratio": round(float(volume_ratio), 2) if pd.notna(volume_ratio) else np.nan,
         "ema20": round(float(ema20.iloc[-1]), 2),
         "ema50": round(float(ema50.iloc[-1]), 2),
         "score": int(score),
